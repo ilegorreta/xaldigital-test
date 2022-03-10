@@ -16,12 +16,29 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
   centos:
     image: centos
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.centos
     networks:
       - postgres
     depends_on:
       - db
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /app/src/insert_data_into_postgres.py'
+  pythonapp:
+    container_name: pythonapp
+    image: pythonapp
+    build:
+      context: ./rest_api
+      dockerfile: Dockerfile
+    networks:
+      - postgres
+    depends_on:
+      - db
+    ports:
+      - "80:80"
+    environment:
+      - DATABASE_URL=postgresql://root:password@db:5432/postgres
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; flask run --host=0.0.0.0 --port=80'
 networks:
   postgres:
     driver: bridge
