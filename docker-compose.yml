@@ -17,8 +17,8 @@ services:
   centos:
     image: centos
     build:
-      context: .
-      dockerfile: Dockerfile.centos
+      context: ./loading_stage
+      dockerfile: Dockerfile
     networks:
       - postgres
     depends_on:
