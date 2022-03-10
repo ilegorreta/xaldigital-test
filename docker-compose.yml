@@ -16,8 +16,12 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
   centos:
     image: centos
+    build: .
     networks:
       - postgres
+    depends_on:
+      - db
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /app/src/insert_data_into_postgres.py'
 networks:
   postgres:
     driver: bridge

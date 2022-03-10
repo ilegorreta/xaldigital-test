@@ -1,10 +1,14 @@
-CREATE TABLE IF NOT EXISTS customer(
-    customer_id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS employee(
+    employee_id SERIAL PRIMARY KEY,
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
-    phone_number INTEGER NOT NULL,
-    curp VARCHAR(18) NOT NULL,
-    rfc VARCHAR(13) NOT NULL,
-    address TEXT
+    company_name VARCHAR(64) NOT NULL,
+    home_address TEXT NOT NULL,
+    city VARCHAR(64) NOT NULL,
+    state VARCHAR(64) NOT NULL,
+    zip VARCHAR(64) NOT NULL,
+    phone1 VARCHAR(10) NOT NULL,
+    phone2 VARCHAR(10) NOT NULL,
+    email VARCHAR(64) NOT NULL,
+    department VARCHAR(64) NOT NULL
 );
-

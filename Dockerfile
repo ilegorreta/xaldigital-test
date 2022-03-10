@@ -5,8 +5,10 @@ WORKDIR /app
 
 # Get requirements
 COPY requirements.txt /app
+COPY data/ /app/data
+COPY src/ /app/src
 
-# We switch to a non-root users to increase security
+# Switch to a non-root users to increase security
 RUN pip install --no-cache-dir -r /app/requirements.txt && \
     groupadd -r appuser && \
     useradd -r -g appuser -d /app appuser && \
