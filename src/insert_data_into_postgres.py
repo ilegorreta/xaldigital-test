@@ -16,11 +16,13 @@ def main():
         port = "5432"
         engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db}")
         df = pd.read_csv(f"data/employees.csv")
-        df["employee_id"] = df.index + 1
-        # shift column 'employee_id' to first position
-        first_column = df.pop("employee_id")
-        df.insert(0, "employee_id", first_column)
-        df.to_sql(con=engine, name="employee", if_exists="replace", index=False)
+        df.to_sql(
+            con=engine,
+            name="employee",
+            schema="public",
+            if_exists="append",
+            index=False,
+        )
     except Exception as e:
         print(f"ERROR: {e}")
 
