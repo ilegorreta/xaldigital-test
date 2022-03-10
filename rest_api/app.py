@@ -1,13 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+import re
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import os
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 db = SQLAlchemy(app)
+
+
+def validate_state(state):
+    if isinstance(state, str) and len(state) == 2:
+        return True
+    else:
+        return False
+
+
+def validate_phone_number(phone1, phone2):
+    PHONE_REGEX = "\w{3}-\w{3}-\w{4}"
+    # Phone formatting should be something like this: '555-111-6789'
+    if re.search(PHONE_REGEX, phone1) and re.search(PHONE_REGEX, phone2):
+        return True
+    else:
+        return False
 
 
 class Employee(db.Model):
@@ -56,9 +73,12 @@ db.create_all()
 # Retrieve single employee
 @app.route("/employee/<employee_id>", methods=["GET"])
 def get_item(employee_id):
-    item = Employee.query.get(employee_id)
-    del item.__dict__["_sa_instance_state"]
-    return jsonify(item.__dict__)
+    try:
+        item = Employee.query.get(employee_id)
+        del item.__dict__["_sa_instance_state"]
+        return jsonify(item.__dict__)
+    except Exception as e:
+        return f"No employee with employee_id = {employee_id} was found. Please validate and try again."
 
 
 # Retrieve all employees
@@ -90,8 +110,13 @@ def create_item():
             body["department"],
         )
     )
-    db.session.commit()
-    return "Employee posted!"
+    if not validate_state(body["state"]):
+        return "State field formatted incorrectly. Please double check input data and try again."
+    elif not validate_phone_number(body["phone1"], body["phone2"]):
+        return "Phone number field(s) formatted incorrectly. Please double check input data and try again."
+    else:
+        db.session.commit()
+        return "Employee posted successfully!"
 
 
 # Update employee information
@@ -113,16 +138,24 @@ def update_item(employee_id):
             department=body["department"],
         )
     )
-    db.session.commit()
-    return "Employee updated"
+    if not validate_state(body["state"]):
+        return "State field formatted incorrectly. Please double check input data and try again."
+    elif not validate_phone_number(body["phone1"], body["phone2"]):
+        return "Phone number field(s) formatted incorrectly. Please double check input data and try again."
+    else:
+        db.session.commit()
+        return "Employee updated successfully!"
 
 
 # Remove employee from database
 @app.route("/employee/<employee_id>", methods=["DELETE"])
 def delete_item(employee_id):
-    db.session.query(Employee).filter_by(employee_id=employee_id).delete()
-    db.session.commit()
-    return "Employee deleted"
+    try:
+        db.session.query(Employee).filter_by(employee_id=employee_id).delete()
+        db.session.commit()
+        return "Employee deleted successfully"
+    except Exception as e:
+        return f"No employee with employee_id = {employee_id} was found. Please validate and try again."
 
 
 if __name__ == "__main__":
