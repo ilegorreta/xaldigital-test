@@ -26,3 +26,6 @@ docker-compose down
 Additionally, you can use the -d flag (dettached) to keep using the current terminal window and let the processed execute on the background. 
 
 ## Developed by: Ivan Legorreta
+**Phone number**: +52 55 1320 7574
+
+**Email**: ilegorreta@outlook.com
