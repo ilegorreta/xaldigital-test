@@ -19,7 +19,7 @@ def validate_state(state):
 
 
 def validate_phone_number(phone1, phone2):
-    PHONE_REGEX = "\w{3}-\w{3}-\w{4}"
+    PHONE_REGEX = "^\d{3}-\d{3}-\d{4}$"
     # Phone formatting should be something like this: '555-111-6789'
     if re.search(PHONE_REGEX, phone1) and re.search(PHONE_REGEX, phone2):
         return True
