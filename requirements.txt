@@ -1,0 +1,7 @@
+flask
+Flask-SQLAlchemy
+psycopg2-binary
+pandas
+sqlalchemy
+pytest
+pytest-cov
