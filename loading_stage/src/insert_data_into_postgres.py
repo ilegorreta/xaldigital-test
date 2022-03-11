@@ -28,6 +28,8 @@ class StateValueException(CustomException):
 
 
 def logger(fn):
+    """Decorator function for logging purposes"""
+
     def get_current_time():
         now = datetime.now()
         return now.strftime("%d/%m/%Y %H:%M:%S")
@@ -45,6 +47,7 @@ def logger(fn):
 
 @logger
 def insert_into_postgres(*args, **kwargs):
+    """Connects to Postgres instance and uploads incoming Pandas dataframe"""
     try:
         host = os.getenv("POSTGRES_SERVICE_NAME")
         user = os.getenv("POSTGRES_USER")
@@ -65,6 +68,7 @@ def insert_into_postgres(*args, **kwargs):
 
 
 def state_validation(state):
+    """Validates format of State column of the CSV file"""
     if isinstance(state, str) and len(state) == 2:
         return state
     else:
@@ -72,6 +76,7 @@ def state_validation(state):
 
 
 def validate_phone_number(df):
+    """Validates format of the Phone number of the CSV file through Regular Expresions"""
     PHONE_REGEX = "^\d{3}-\d{3}-\d{4}$"
     if re.search(PHONE_REGEX, df.phone1) and re.search(PHONE_REGEX, df.phone2):
         pass
@@ -82,11 +87,13 @@ def validate_phone_number(df):
 
 
 def validate_fields(df):
+    """Calls helper functions to validate CSV fields"""
     df["state"] = df["state"].apply(lambda x: state_validation(x))
     df.apply(lambda x: validate_phone_number(x), axis=1)
 
 
 def main():
+    """Reads data from CSV file and converts it into Pandas dataframe to validate and insert to Postgres"""
     df = pd.read_csv(f"data/employees.csv")
     validate_fields(df)
     insert_into_postgres(df)

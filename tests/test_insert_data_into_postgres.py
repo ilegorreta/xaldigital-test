@@ -20,23 +20,27 @@ def data_path():
 
 
 def test_raises_phone1_format_error(data_path):
+    """Raises a PhoneNumberFormatException"""
     df = pd.read_csv(f"{data_path}/invalid_phone1_format.csv")
     with pytest.raises(insert_data_into_postgres.PhoneNumberFormatException):
         insert_data_into_postgres.validate_fields(df)
 
 
 def test_raises_phone2_format_error(data_path):
+    """Raises a PhoneNumberFormatException"""
     df = pd.read_csv(f"{data_path}/invalid_phone2_format.csv")
     with pytest.raises(insert_data_into_postgres.PhoneNumberFormatException):
         insert_data_into_postgres.validate_fields(df)
 
 
 def test_raises_state_error(data_path):
+    """Raises a StateValueException"""
     df = pd.read_csv(f"{data_path}/invalid_state.csv")
     with pytest.raises(insert_data_into_postgres.StateValueException):
         insert_data_into_postgres.validate_fields(df)
 
 
 def test_insert(data_path):
+    """Test the correct insertion to Postgres"""
     df = pd.read_csv(f"{data_path}/valid_insert.csv")
     insert_data_into_postgres.insert_into_postgres(df)

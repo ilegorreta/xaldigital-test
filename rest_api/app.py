@@ -12,6 +12,7 @@ db = SQLAlchemy(app)
 
 
 def validate_state(state):
+    """Validates format of the State field of the incoming request"""
     if isinstance(state, str) and len(state) == 2:
         return True
     else:
@@ -19,6 +20,7 @@ def validate_state(state):
 
 
 def validate_phone_number(phone1, phone2):
+    """Validates format of the Phone number fields of the incoming request through Regular Expresions"""
     PHONE_REGEX = "^\d{3}-\d{3}-\d{4}$"
     # Phone formatting should be something like this: '555-111-6789'
     if re.search(PHONE_REGEX, phone1) and re.search(PHONE_REGEX, phone2):
@@ -70,9 +72,10 @@ class Employee(db.Model):
 
 db.create_all()
 
-# Retrieve single employee
+
 @app.route("/employee/<employee_id>", methods=["GET"])
 def get_item(employee_id):
+    """Endpoint to retrieve single employee"""
     try:
         item = Employee.query.get(employee_id)
         del item.__dict__["_sa_instance_state"]
@@ -81,9 +84,9 @@ def get_item(employee_id):
         return f"No employee with employee_id = {employee_id} was found. Please validate and try again."
 
 
-# Retrieve all employees
 @app.route("/employees", methods=["GET"])
 def get_items():
+    """Endpoint to retrieve all employees"""
     items = []
     for item in db.session.query(Employee).all():
         del item.__dict__["_sa_instance_state"]
@@ -91,9 +94,9 @@ def get_items():
     return jsonify(items)
 
 
-# Post a new Employee
 @app.route("/new_employee", methods=["POST"])
 def create_item():
+    """Endpoint to post a new employee"""
     body = request.get_json()
     db.session.add(
         Employee(
@@ -119,9 +122,9 @@ def create_item():
         return "Employee posted successfully!"
 
 
-# Update employee information
 @app.route("/employee/<employee_id>", methods=["PUT"])
 def update_item(employee_id):
+    """Endpoint to update an existing employee"""
     body = request.get_json()
     db.session.query(Employee).filter_by(employee_id=employee_id).update(
         dict(
@@ -147,9 +150,9 @@ def update_item(employee_id):
         return "Employee updated successfully!"
 
 
-# Remove employee from database
 @app.route("/employee/<employee_id>", methods=["DELETE"])
 def delete_item(employee_id):
+    """Endpoint to delete an existing employee"""
     try:
         db.session.query(Employee).filter_by(employee_id=employee_id).delete()
         db.session.commit()
