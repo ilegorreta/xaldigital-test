@@ -24,6 +24,14 @@ services:
     depends_on:
       - db
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /app/src/insert_data_into_postgres.py'
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TABLE_NAME=${TABLE_NAME}
+      - POSTGRES_DEFAULT_SCHEMA=${POSTGRES_DEFAULT_SCHEMA}
+      - POSTGRES_PORT=${POSTGRES_PORT}
   pythonapp:
     container_name: pythonapp
     image: pythonapp

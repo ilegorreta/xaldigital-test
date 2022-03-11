@@ -46,17 +46,17 @@ def logger(fn):
 @logger
 def insert_into_postgres(*args, **kwargs):
     try:
-        host = "db"
-        user = "root"
-        password = "password"
-        db = "postgres"
-        port = "5432"
+        host = os.getenv("POSTGRES_SERVICE_NAME")
+        user = os.getenv("POSTGRES_USER")
+        password = os.getenv("POSTGRES_PASSWORD")
+        db = os.getenv("POSTGRES_DB")
+        port = os.getenv("POSTGRES_PORT")
         engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db}")
         df = args[0]
         df.to_sql(
             con=engine,
-            name="employee",
-            schema="public",
+            name=os.getenv("TABLE_NAME"),
+            schema=os.getenv("POSTGRES_DEFAULT_SCHEMA"),
             if_exists="append",
             index=False,
         )
